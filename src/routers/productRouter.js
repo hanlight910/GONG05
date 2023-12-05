@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Auth = require('../models/authModel');
-const Product = require('../models/productModel');
-const authenticateToken = require('../middleware/authMiddleware');
+const Auth = require('../../models/authModel');
+const Product = require('../../models/productModel');
+const authenticateToken = require('../src/middleware/authMiddleware');
 
 router.post('/product', authenticateToken, async (req, res) => {
 	try {
 		const { title, content } = req.body;
-
+		
 		const userId = req.locals.user.userId;
 		const product = await Product.create({
 			title,
@@ -44,7 +44,7 @@ router.put('/product/:productId', authenticateToken, async (req, res) => {
 		await existingProduct.update({
 			title,
 			content,
-			status,
+			status, 
 		});
 
 		res.status(201).json({ product: existingProduct });
@@ -66,9 +66,7 @@ router.delete('/product/:productId', authenticateToken, async (req, res) => {
 		}
 
 		if (existingProduct.userId !== userId) {
-			return res
-				.status(403)
-				.json({ error: '해당 상품을 삭제할 권한이 없습니다.' });
+			return res.status(403).json({ error: '해당 상품을 삭제할 권한이 없습니다.' });
 		}
 
 		await existingProduct.destroy();
@@ -84,10 +82,7 @@ router.get('/products', async (req, res) => {
 	try {
 		const { sort } = req.query;
 
-		const order =
-			sort && sort.toUpperCase() === 'ASC'
-				? [['createdAt', 'ASC']]
-				: [['createdAt', 'DESC']];
+		const order = sort && sort.toUpperCase() === 'ASC'? [['createdAt', 'ASC']]: [['createdAt', 'DESC']];
 
 		const products = await Product.findAll({
 			attributes: ['id', 'title', 'content', 'status', 'createdAt'],
@@ -110,7 +105,7 @@ router.get('/product/:productId', async (req, res) => {
 		const productId = req.params.productId;
 
 		const product = await Product.findOne({
-			where: { id: productId },
+			where: { id: productId }, // id.id === productId
 			include: [
 				{
 					model: Auth,
@@ -132,7 +127,7 @@ router.get('/product/:productId', async (req, res) => {
 			createdAt: product.createdAt,
 		};
 
-		res.json({ product: productInfo });
+		res.json({ productInfo });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: '서버 오류' });
