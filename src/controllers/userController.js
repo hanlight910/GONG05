@@ -1,32 +1,57 @@
+import { check, validationResult } from 'express-validator';
 import UserService from '../services/userService.js';
 
+const signUpValidation = [
+  check('email').isEmail().withMessage('올바른 이메일 형식이 아닙니다.'),
+];
+
 class UserController {
-  static async getAllUsers(req, res) {
-    const users = await UserService.getAllUsers();
-    res.json(users);
-  }
+  static async signUp(req, res) {
+    try {
+      const { email, password, confirmPassword, name } = req.body;
 
-  static async getUserById(req, res) {
-    const userId = parseInt(req.params.id, 10);
-    const user = await UserService.getUserById(userId);
+      const errors = validationResult(req);
 
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ error: '유저가 존재하지 않습니다.' });
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const responseUser = await UserService.signUp({
+        email,
+        password,
+        confirmPassword,
+        name,
+      });
+
+      res.status(201).json({ message: '회원가입 성공!', user: responseUser });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '서버 에러' });
     }
   }
 
-  static async createUser(req, res) {
-    const { email, name, password } = req.body;
+  static async login(req, res) {
+    try {
+      const { email, password } = req.body;
 
-    const newUser = await UserService.createUser({
-      email,
-      name,
-      password,
-    });
+      const responseToken = await UserService.login({ email, password });
 
-    res.json(newUser);
+      res.json(responseToken);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '서버 에러' });
+    }
+  }
+
+  static async getUser(req, res) {
+    try {
+      const responseUser = await UserService.getUser(req.locals.user.userId);
+
+      res.json(responseUser);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '서버 에러' });
+    }
   }
 }
 

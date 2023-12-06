@@ -1,15 +1,22 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../utils/index.js';
 
 class UserRepository {
-    static getAllUsers() {
-        return prisma.user.findMany();
+    static async findByEmail(email) {
+        return prisma.user.findUnique({
+            where: { email },
+        });
     }
 
-    static getUserById(userId) {
+    static async findById(userId) {
         return prisma.user.findUnique({
             where: { id: userId },
+            select: {
+                id: true,
+                email: true,
+                name: true, 
+                createdAt: true,
+                updatedAt: true,
+            }
         });
     }
 
