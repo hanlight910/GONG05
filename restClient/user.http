@@ -1,0 +1,24 @@
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+    "email": "example4@email.com",
+    "password": "123456",
+    "confirmPassword": "123456",
+    "name": "example"
+
+}
+###
+Post http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+    "email": "example@email.com",
+    "name": "example",
+    "password": "123456"
+}
+
+###
+GET http://localhost:3000/users/info
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTcwMjAyNjA4MCwiZXhwIjoxNzAyMDY5MjgwfQ.GRa1IfWn_6_SUgBPTbCLxIIMKdVBjC_Ja2kDMWmJ2I4

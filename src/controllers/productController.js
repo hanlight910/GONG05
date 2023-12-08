@@ -1,84 +1,79 @@
-import { validationResult } from 'express-validator';
 import ProductService from '../services/productService.js';
 
 class ProductController {
-  static async create(req, res) {
-    try {
-      const { title, description } = req.body;
+	productService = new ProductService();
+	create = async (req, res, next) => {
+		try {
+			const { title, description } = req.body;
 
-      const errors = validationResult(req);
+			const userId = req.user.userId;
+			await this.productService.create({
+				title,
+				description,
+				userId,
+				status: 'FOR_SALE',
+			});
 
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
+			res.status(201).json({ message: '상품을 생성하는데 성공하였습니다' });
+		} catch (error) {
+			next(error);
+		}
+	};
 
-      const userId = req.locals.user.userId;
-      await ProductService.create({
-        title,
-        description,
-        userId,
-        status: 'FOR_SALE',
-      });
+	update = async (req, res, next) => {
+		try {
+			const { title, description, status } = req.body;
+			const { productId } = req.params;
 
-      res.status(201).json({ message: '상품을 생성하는데 성공하였습니다' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: '서버 오류' });
-    }
-  }
+			await this.productService.update(Number(productId), req.user.userId ,{
+				title,
+				description,
+				status,
+			});
 
-  static async update(req, res) {
-    try {
-      const { title, description, status } = req.body;
-      const { productId } = req.params;
+			res.status(201).json({ message: '상품을 수정하는데 성공하였습니다' });
+		} catch (error) {
+			next(error);
+		}
+	};
 
-      await ProductService.update(Number(productId), { title, description, status });
+	delete = async (req, res, next) => {
+		try {
+			const { productId } = req.params;
 
-      res.status(201).json({ message: '상품을 수정하는데 성공하였습니다' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: '서버 오류' });
-    }
-  }
+			await this.productService.delete(Number(productId), req.user.userId);
 
-  static async delete(req, res) {
-    try {
-      const { productId } = req.params;
+			res.json({ message: '상품이 성공적으로 삭제되었습니다.' });
+		} catch (error) {
+			next(error);
+		}
+	};
 
-      await ProductService.delete(Number(productId));
+	findAll = async (req, res, next) => {
+		try {
+			const { sort } = req.query;
 
-      res.json({ message: '상품이 성공적으로 삭제되었습니다.' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: '서버 오류' });
-    }
-  }
+			const response = await this.productService.findAll(sort);
 
-  static async findAll(req, res) {
-    try {
-      const { sort } = req.query;
+			res.json(response);
+		} catch (error) {
+			next(error);
+		}
+	};
 
-      const response = await ProductService.findAll(sort);
+	findById = async (req, res, next) => {
+		try {
+			const { productId } = req.params;
 
-      res.json(response);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: '서버 오류' });
-    }
-  }
+			const responseProduct = await this.productService.findById(
+				Number(productId),
+			);
 
-  static async findById(req, res) {
-    try {
-      const { productId } = req.params;
-
-      const responseProduct = await ProductService.findById(Number(productId));
-
-      res.json(responseProduct);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: '서버 오류' });
-    }
-  }
+			res.json(responseProduct);
+		} catch (error) {
+			next(error);
+		}
+	};
 }
 
 export default ProductController;

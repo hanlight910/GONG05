@@ -1,11 +1,9 @@
-dotenv.config()
 import express from 'express';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 
-
-import userRouter from './routers/userRouter.js';
-import productRouter from './routers/productRouter.js';
+import router from './routers/index.js';
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
@@ -13,10 +11,14 @@ const PORT = process.env.PORT;
 app.use(bodyParser.json());
 app.use(express.json());
 
-app.use('/users', userRouter);
-app.use('/products', productRouter);
+app.use('/', router);
+
+app.use((err, req, res, next) => {
+	console.error(err)
+	const statusCode = err.status || 500;
+	res.status(statusCode).send(err.message)
+})
 
 app.listen(PORT, () => {
 	console.log(`서버가 열렸습니다. ${PORT}`);
 });
-

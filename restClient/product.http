@@ -1,0 +1,28 @@
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTcwMjAyNTU2OCwiZXhwIjoxNzAyMDY4NzY4fQ.qeVKYeHsHL3rwAy8UKLI5oKUN5cybBAi_ztnFN8C5Nw
+GET http://localhost:3000/products?sort=asc
+###
+GET http://localhost:3000/products/7
+
+### 
+POST http://localhost:3000/products
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "알파",
+    "description": "첫번째"
+}
+###
+PUT http://localhost:3000/products/10
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "알파",
+    "description": "첫번째"
+}
+###
+DELETE http://localhost:3000/products/10
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
