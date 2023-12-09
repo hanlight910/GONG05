@@ -1,4 +1,4 @@
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTcwMjAyNTU2OCwiZXhwIjoxNzAyMDY4NzY4fQ.qeVKYeHsHL3rwAy8UKLI5oKUN5cybBAi_ztnFN8C5Nw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjgsImlhdCI6MTcwMjAzODMzOSwiZXhwIjoxNzAyMDgxNTM5fQ.FrP1au4lD-dnBCyxoDk7IQtq6bJD-pDDuQ47qHf9oys
 GET http://localhost:3000/products?sort=asc
 ###
 GET http://localhost:3000/products/7
@@ -13,7 +13,7 @@ Authorization: Bearer {{token}}
     "description": "첫번째"
 }
 ###
-PUT http://localhost:3000/products/10
+PUT http://localhost:3000/products/30
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -22,7 +22,7 @@ Authorization: Bearer {{token}}
     "description": "첫번째"
 }
 ###
-DELETE http://localhost:3000/products/10
+DELETE http://localhost:3000/products/30
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
