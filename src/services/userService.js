@@ -20,8 +20,8 @@ class UserService {
 		}
 
 		if (password !== confirmPassword) {
-			const errPasswordMatch = new Error('패스워드가 서로 동일하지 않습니다.');
-			errPasswordMatch.status = 401;
+			const errPasswordDontMatch = new Error('패스워드가 서로 동일하지 않습니다.');
+			errPasswordDontMatch.status = 401;
 			throw errPasswordDontMatch
 		}
 
@@ -44,17 +44,11 @@ class UserService {
 
 	static async login({ email, password }) {
 		const user = await UserRepository.findByEmail(email);
-		if (!user) {
-			const errEmailNotExisted = new Error('해당 이메일이 존재하지 않습니다.');
-			errEmailNotExisted.status = 404;
-			throw new errEmailNotExisted
-		}
-
 		const matchPassword = await bcrypt.compare(password, user.password);
-		if (!matchPassword) {
-			const errPasswordNotEqual = new Error('비밀번호가 일치하지 않습니다.');
-			errPasswordNotEqual.status = 401;
-			throw errPasswordNotEqual
+		if (!user || !matchPassword) {
+			const errEmailNotExisted = new Error('해당 이메일이 존재하지 않거나, 비밀번호가 맞지 않습니다.');
+			errEmailNotExisted.status = 400;
+			throw errEmailNotExisted
 		}
 
 		const accessToken = jwt.sign({ userId: user.id }, secretKey, {
